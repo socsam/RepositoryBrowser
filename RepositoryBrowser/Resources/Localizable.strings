@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  RepositoryBrowser
+
+  Created by DDragutan on 3/31/20.
+  Copyright © 2020 DDragutan. All rights reserved.
+*/
+
+"users";
+"uknown-error" = "uknown error";
+"error";
+"ok";
+"search-no-results" = "No users were found";
+"repos-count" = "Repo: %d";
