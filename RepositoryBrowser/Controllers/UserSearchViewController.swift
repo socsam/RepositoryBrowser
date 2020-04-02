@@ -127,8 +127,9 @@ extension UserSearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
             // to limit network activity, reload half a second after last key press.
-            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
-            perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
+//            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
+//            perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
+            doSearch()
         }
     }
     

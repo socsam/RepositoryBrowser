@@ -13,6 +13,9 @@ class NetworkRequest {
     
     public static let shared = NetworkRequest()
     
+    private var login:String?
+    private var password:String?
+    
     private var session: URLSession = {
         /*
          disable URLSession cache for debugging purpose to make sure custom cache implementation is working properly
@@ -24,9 +27,32 @@ class NetworkRequest {
     }()
     
     private var cache: NSCache<NSURL, UIImage> = NSCache()
+    
+    public func setCredentials(login: String, password: String) {
+        self.login = login
+        self.password = password
+    }
+    
+    private func getRequest(`for` url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        if let login = login, let password = password {
+            let loginString = "\(login):\(password)"
+            if let base64LoginString = loginString.data(using: String.Encoding.utf8)?.base64EncodedString() {
+                request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+            }
+        }
+        
+        return request
+    }
 
     public func getData(url:URL, completionHandler: @escaping (Data?, Error?) -> Void) {
-        session.dataTask(with: url) { (data, response, error) in
+        let request = getRequest(for: url)
+        session.dataTask(with: request) { (data, response, error) in
+            if let error = error as NSError?, error.code != NSURLErrorCancelled {
+                print(error.localizedDescription)
+            }
             completionHandler(data, error)
         }.resume()
     }

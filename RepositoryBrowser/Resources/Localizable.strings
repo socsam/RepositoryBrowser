@@ -15,7 +15,7 @@
 "error";
 "ok";
 "search-no-results" = "No users were found";
-"repos-count" = "Repo: %@";
+"repos-count" = "Repo: %d";
 "forks-count" = "%d Forks";
 "stars-count" = "%d Stars";
 "followers" = "%d Followers";
@@ -24,3 +24,9 @@
 "no-location" = "No location";
 "no-join-date" = "Join date unkonwn";
 "search-repositories" = "Search for User's Repositories";
+"login-to" = "Sign in to %@";
+"login-placeholder" = "User Name";
+"password-placeholder" = "Password";
+"login-button" = "Sign In";
+"skip-button" = "Skip";
+"provide-credentials" = "Please enter valid login and password";

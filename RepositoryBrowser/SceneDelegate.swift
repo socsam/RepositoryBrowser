@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = ViewControllerFactory.usersList()
+        window?.rootViewController = ViewControllerFactory.basicAuth()
         window?.makeKeyAndVisible()
     }
 

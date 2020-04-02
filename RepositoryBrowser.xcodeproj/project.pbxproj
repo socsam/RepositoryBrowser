@@ -26,6 +26,7 @@
 		A6C59DF6243548F1009E6F61 /* RepositoryRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C59DF5243548F1009E6F61 /* RepositoryRequest.swift */; };
 		A6C59DF824354BAA009E6F61 /* RepositoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C59DF724354BAA009E6F61 /* RepositoryTableViewCell.swift */; };
 		A6C59DFA24354F27009E6F61 /* RepositoryTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C59DF924354F27009E6F61 /* RepositoryTableViewDataSource.swift */; };
+		A6C59DFC2435B806009E6F61 /* BasicAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C59DFB2435B806009E6F61 /* BasicAuthViewController.swift */; };
 		A6EC02FB24342CB2001C8D69 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EC02FA24342CB2001C8D69 /* AppDelegate.swift */; };
 		A6EC02FD24342CB2001C8D69 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EC02FC24342CB2001C8D69 /* SceneDelegate.swift */; };
 		A6EC030424342CBC001C8D69 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6EC030324342CBC001C8D69 /* Assets.xcassets */; };
@@ -73,6 +74,7 @@
 		A6C59DF5243548F1009E6F61 /* RepositoryRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryRequest.swift; sourceTree = "<group>"; };
 		A6C59DF724354BAA009E6F61 /* RepositoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTableViewCell.swift; sourceTree = "<group>"; };
 		A6C59DF924354F27009E6F61 /* RepositoryTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTableViewDataSource.swift; sourceTree = "<group>"; };
+		A6C59DFB2435B806009E6F61 /* BasicAuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAuthViewController.swift; sourceTree = "<group>"; };
 		A6EC02F724342CB2001C8D69 /* RepositoryBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepositoryBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6EC02FA24342CB2001C8D69 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A6EC02FC24342CB2001C8D69 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 			children = (
 				A6C59DEC2434666A009E6F61 /* UserSearchViewController.swift */,
 				A6C59DF324354896009E6F61 /* RepoSearchViewController.swift */,
+				A6C59DFB2435B806009E6F61 /* BasicAuthViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -402,6 +405,7 @@
 				A6C59DE524346477009E6F61 /* ViewFactory.swift in Sources */,
 				A6C59DED2434666A009E6F61 /* UserSearchViewController.swift in Sources */,
 				A6C59DF6243548F1009E6F61 /* RepositoryRequest.swift in Sources */,
+				A6C59DFC2435B806009E6F61 /* BasicAuthViewController.swift in Sources */,
 				A6EC033A24344C05001C8D69 /* URLFactory.swift in Sources */,
 				A6C59DE124345E78009E6F61 /* GitHubUserList.swift in Sources */,
 				A6EC02FB24342CB2001C8D69 /* AppDelegate.swift in Sources */,

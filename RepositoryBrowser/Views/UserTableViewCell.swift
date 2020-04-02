@@ -90,7 +90,7 @@ class UserTableViewCell: UITableViewCell {
     }
     
     func updateNumberOfRepos(`for` user: User) {
-        let reposCount = String(user.publicRepos ?? 0)
+        let reposCount = user.publicRepos ?? 0
         numberOfRepos.text = String(format: NSLocalizedString("repos-count", comment: ""), reposCount)
     }
     
