@@ -55,7 +55,9 @@ class UserSearchViewController: UIViewController {
         navigationItem.title = title
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(backToLogin))
         
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.delegate = self
@@ -105,6 +107,10 @@ class UserSearchViewController: UIViewController {
             }
         }
     }
+    
+    @objc func backToLogin() {
+        dismiss(animated: true, completion: nil)
+    }
 }
 
 
@@ -127,13 +133,13 @@ extension UserSearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
             // to limit network activity, reload half a second after last key press.
-//            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
-//            perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
-            doSearch()
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
+            perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        RequestFactory.cancelAll()
         users = []
     }
 
