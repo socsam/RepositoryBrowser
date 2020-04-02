@@ -17,14 +17,9 @@ class UserSearchViewController: UIViewController {
     private let tableView = TableVewFactory.userList()
     private let tableDataSource = UserTableViewDataSource()
     private let activityIndicator = ViewFactory.activityIndicator()
-
-    private var users:[User] = [] {
-        didSet {
-            tableDataSource.users = users
-            tableView.reloadData()
-        }
-    }
     
+    private var userToSearch:String?
+
     init(dataSource: DataSourceType, request: UsersRequest?) {
         self.dataSourceType = dataSource
         self.dataRequest = request
@@ -65,6 +60,7 @@ class UserSearchViewController: UIViewController {
         
         view.addSubview(tableView)
         tableView.dataSource = tableDataSource
+        tableView.prefetchDataSource = self
         tableView.delegate = self
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -79,30 +75,62 @@ class UserSearchViewController: UIViewController {
     @objc private func reloadData() {
         guard let request = dataRequest else { return }
         
+        tableDataSource.removeAll()
+        tableView.reloadData()
+
         activityIndicator.startAnimating()
-        users = []
-        request.getList { [unowned self] userList, error in
+        request.getList { [weak self] userList, error in
             DispatchQueue.main.async {
-                if let users = userList?.users {
-                    self.activityIndicator.stopAnimating()
-                    self.users = users
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if let list = userList {
+                    strongSelf.activityIndicator.stopAnimating()
+                    
+                    /*
+                     github api has limit about 1000 results for logged in users and about 300 for guets, not the number in list.totalCount
+                     and if user keep scrolling long enough new cells will stop to appear
+                     even though scroll indicator will show that there is much more to show
+                     */
+                    strongSelf.tableDataSource.totalCount = list.totalCount ?? 0
+                    strongSelf.tableDataSource.users = list.users ?? []
                     
                     //inform user that no ithub users were found
                     //normally it should a custom cell or a view but for a test project an alert will suffice
-                    if users.count == 0 {
-                        self.searchController.showMessage(title: nil, message: NSLocalizedString("search-no-results", comment: ""))
+                    if list.users?.count == 0 {
+                        strongSelf.searchController.showMessage(title: nil, message: NSLocalizedString("search-no-results", comment: ""))
                     }
+                    
+                    strongSelf.tableView.reloadData()
                 } else {
                     if let error = error as NSError? {
                         //don't show error if request was canceled
                         if error.code != NSURLErrorCancelled {
-                            self.activityIndicator.stopAnimating()
-                            self.searchController.showError(error)
+                            strongSelf.activityIndicator.stopAnimating()
+                            strongSelf.searchController.showError(error)
                         }
                     } else {
-                        self.activityIndicator.stopAnimating()
-                        self.showMessage(title: NSLocalizedString("error", comment: "").uppercased(), message: NSLocalizedString("uknown-error", comment: "").capitalized)
+                        strongSelf.activityIndicator.stopAnimating()
+                        strongSelf.showMessage(title: NSLocalizedString("error", comment: "").uppercased(), message: NSLocalizedString("uknown-error", comment: "").capitalized)
                     }
+                }
+            }
+        }
+    }
+    
+    @objc private func loadMoreData(rowsToReload:[IndexPath]) {
+        guard let request = dataRequest else { return }
+        
+        request.getList { [weak self] userList, error in
+            DispatchQueue.main.async {
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if let additionalUsers = userList?.users {
+                    strongSelf.tableDataSource.append(additionalUsers)
+                    strongSelf.tableView.reloadRows(at: rowsToReload, with: .none)
                 }
             }
         }
@@ -121,26 +149,31 @@ extension UserSearchViewController: UISearchBarDelegate {
      initiate new search request
      */
     @objc public func doSearch() {
-        guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {
+        guard let userToSearch = userToSearch, !userToSearch.isEmpty else {
             return
         }
         
         RequestFactory.cancelAll()
-        dataRequest = RequestFactory.searchUsers(in: dataSourceType, keyword: searchText)
+        dataRequest = RequestFactory.searchUsers(in: dataSourceType, keyword: userToSearch)
         reloadData()
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
+            userToSearch = searchText
             // to limit network activity, reload half a second after last key press.
             NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
             perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
+        } else {
+            userToSearch = nil
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        userToSearch = nil
         RequestFactory.cancelAll()
-        users = []
+        tableDataSource.removeAll()
+        tableView.reloadData()
     }
 
 }
@@ -150,11 +183,9 @@ extension UserSearchViewController: UITableViewDelegate {
      download images only for visible cells
      */
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard indexPath.row < users.count else {
+        guard let user = tableDataSource.get(at: indexPath) else {
             return
         }
-        
-        let user = users[indexPath.row]
         
         if let avatarUrl = user.avatarUrl {
             RequestFactory.downloadImage(url: avatarUrl) { image, _ in
@@ -176,13 +207,37 @@ extension UserSearchViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row < users.count else {
+        guard let user = tableDataSource.get(at: indexPath) else {
             return
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        let user = users[indexPath.row]
         present(ViewControllerFactory.repositoryList(for: user, dataSource: dataSourceType), animated: true, completion: nil)
     }
+}
+
+
+extension UserSearchViewController: UITableViewDataSourcePrefetching {
+
+    /*
+     this methods can be called multiple times with the same IndexPath
+     */
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        guard let userToSearch = userToSearch, !userToSearch.isEmpty else {
+            return
+        }
+
+        //check if data already requested for the particular cell
+        if indexPaths.contains(where: isLoadingCell) {
+            let nextPage = tableDataSource.increasePage()
+            dataRequest = RequestFactory.searchUsers(in: dataSourceType, keyword: userToSearch, page: nextPage)
+            loadMoreData(rowsToReload: indexPaths)
+        }
+    }
+    
+    
+    func isLoadingCell(for indexPath: IndexPath) -> Bool {
+        return tableDataSource.get(at: indexPath) == nil
+    }
+
 }

@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 struct RequestFactory {
-    static func searchUsers(in dataSource: DataSourceType, keyword: String?) -> UsersRequest? {
-        guard let url = URLFactory.getSearchURL(for: dataSource, keyword: keyword) else {
+    static func searchUsers(in dataSource: DataSourceType, keyword: String?, page: Int=1) -> UsersRequest? {
+        guard let url = URLFactory.getSearchURL(for: dataSource, keyword: keyword, page: page) else {
             return nil
         }
 

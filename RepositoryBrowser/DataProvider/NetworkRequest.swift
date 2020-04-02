@@ -50,9 +50,6 @@ class NetworkRequest {
     public func getData(url:URL, completionHandler: @escaping (Data?, Error?) -> Void) {
         let request = getRequest(for: url)
         session.dataTask(with: request) { (data, response, error) in
-            if let error = error as NSError?, error.code != NSURLErrorCancelled {
-                print(error.localizedDescription)
-            }
             completionHandler(data, error)
         }.resume()
     }

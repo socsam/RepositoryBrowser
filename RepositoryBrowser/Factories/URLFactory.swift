@@ -10,7 +10,7 @@ import Foundation
 
 struct URLFactory {
 
-    static func getSearchURL(`for` dataSource: DataSourceType, keyword: String?) -> URL? {
+    static func getSearchURL(`for` dataSource: DataSourceType, keyword: String?, page: Int=1) -> URL? {
         guard let keyword = keyword?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let urlTemplate = ConfigReader.getValue(for: .searchUrl, dataSource: dataSource) else {
             return nil
@@ -18,7 +18,7 @@ struct URLFactory {
         
         switch dataSource {
         case .GitHub:
-            let urlString = String(format: urlTemplate, keyword)
+            let urlString = String(format: urlTemplate, keyword, page)
             return URL(string: urlString)
         }
     }
