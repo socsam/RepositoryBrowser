@@ -36,6 +36,15 @@ struct RequestFactory {
         return UsersRequestImpl(request: request)
     }
     
+    static func getRepositories(`for` user: User) -> RepositoryRequest? {
+        guard let url = user.reposUrl else {
+            return nil
+        }
+
+        let request = JSONRequest(requestType: [GitHubRepository].self, url: url)
+        return RepositoryRequestImpl(request: request)
+    }
+    
     static func downloadImage(url:URL, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         NetworkRequest.shared.downloadImage(url: url) { image, error in
             completionHandler(image, error)

@@ -6,9 +6,15 @@
   Copyright © 2020 DDragutan. All rights reserved.
 */
 
-"users";
+"github" = "GitHub";
+"service-searcher" = "%@ Searcher";
+"search-users" = "Search users";
+"search-for-users" = "Search for users";
+"search-repositories" = "Search repositories";
 "uknown-error" = "uknown error";
 "error";
 "ok";
 "search-no-results" = "No users were found";
-"repos-count" = "Repo: %d";
+"repos-count" = "Repo: %@";
+"forks-count" = "%d Forks";
+"stars-count" = "%d Stars";

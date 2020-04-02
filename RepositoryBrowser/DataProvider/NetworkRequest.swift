@@ -18,8 +18,8 @@ class NetworkRequest {
          disable URLSession cache for debugging purpose to make sure custom cache implementation is working properly
          */
         let config = URLSessionConfiguration.default
-        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        config.urlCache = nil
+        config.requestCachePolicy = .returnCacheDataElseLoad //reloadIgnoringLocalAndRemoteCacheData
+//        config.urlCache = nil
         return URLSession.init(configuration: config)
     }()
     

@@ -15,7 +15,7 @@ struct GitHubRepository: Codable {
         case forksCount = "forks_count"
     }
 
-    var name:String?
+    var name:String
     var starsCount:Int?
     var forksCount:Int?
 }

@@ -10,7 +10,7 @@ import Foundation
 
 protocol UsersRequest {
     func getList(completionHandler: @escaping (UserList?, Error?) -> Void)
-    func getUser(completionHandler: @escaping (User?, Error?) -> Void)
+    func update(_ user:User, completionHandler: @escaping (User, Error?) -> Void)
 }
 
 
@@ -40,7 +40,15 @@ struct UsersRequestImpl: UsersRequest {
         }
     }
     
-    func getUser(completionHandler: @escaping (User?, Error?) -> Void) {
-        
+    func update(_ user:User, completionHandler: @escaping (User, Error?) -> Void) {
+        request.execute { (decodedObject:Codable?, error:Error?) in
+            guard let decodedObject = decodedObject else {
+                completionHandler(user, error)
+                return
+            }
+
+            user.update(with: decodedObject)
+            completionHandler(user, nil)
+        }
     }
 }

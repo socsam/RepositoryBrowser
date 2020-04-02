@@ -65,18 +65,18 @@ class GitHubTests: XCTestCase {
             decoder.dateDecodingStrategy = .iso8601
 
             let user = try decoder.decode(GitHubUser.self, from: data)
-            XCTAssertEqual(user.id, 47313)
-            XCTAssertEqual(user.login, "fabpot")
-            XCTAssertEqual(user.publicRepos, 42)
-            XCTAssertEqual(user.avatarUrl, "https://avatars3.githubusercontent.com/u/47313?v=4")
-            XCTAssertEqual(user.followers, 10095)
-            XCTAssertEqual(user.following, 0)
-            XCTAssertNil(user.bio)
+            XCTAssertEqual(user.login, "john")
+            XCTAssertEqual(user.publicRepos, 53)
+            XCTAssertEqual(user.reposUrl?.absoluteString, "https://api.github.com/users/john/repos")
+            XCTAssertEqual(user.avatarUrl?.absoluteString, "https://avatars1.githubusercontent.com/u/1668?v=4")
+            XCTAssertEqual(user.followers, 90)
+            XCTAssertEqual(user.following, 48)
+            XCTAssertEqual(user.bio, "I'm a solutions architect at AWS and prior to that co-founded Entelo. Interested in renewable energy, media, and democracy.")
             XCTAssertNil(user.email)
-            XCTAssertNotNil(user.createdAt)
             
+            XCTAssertNotNil(user.createdAt)
             let createdDate = getDateFormatter().string(from: user.createdAt!)
-            XCTAssertEqual(createdDate, "2009-01-17T13:42:51Z")
+            XCTAssertEqual(createdDate, "2008-02-28T23:17:13Z")
 
         } catch {
             print(error)
@@ -99,9 +99,8 @@ class GitHubTests: XCTestCase {
             XCTAssertNotNil(list.users)
             XCTAssertTrue(list.users!.count > 0)
             let user = list.users!.first!
-            XCTAssertEqual(user.id, 2749)
             XCTAssertEqual(user.login, "fabien")
-            XCTAssertEqual(user.avatarUrl, "https://avatars1.githubusercontent.com/u/2749?v=4")
+            XCTAssertEqual(user.avatarUrl?.absoluteString, "https://avatars1.githubusercontent.com/u/2749?v=4")
         } catch {
             print(error)
             XCTFail("Can't parse users_list.json")

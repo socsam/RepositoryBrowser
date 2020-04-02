@@ -13,12 +13,12 @@ class UserSearchViewController: UIViewController {
     private var dataSourceType:DataSourceType!
     private var dataRequest:UsersRequest?
 
-    private let searchController = ViewControllerFactory.mediaSearch()
+    private let searchController = ViewControllerFactory.usersSearch()
     private let tableView = TableVewFactory.userList()
     private let tableDataSource = UserTableViewDataSource()
     private let activityIndicator = ViewFactory.activityIndicator()
 
-    private var users:[UserObject] = [] {
+    private var users:[User] = [] {
         didSet {
             tableDataSource.users = users
             tableView.reloadData()
@@ -43,12 +43,22 @@ class UserSearchViewController: UIViewController {
 
     private func initUI() {
         view.backgroundColor = .white
-        navigationItem.title = NSLocalizedString("users", comment: "").capitalized
+        
+        var title = ""
+        switch dataSourceType {
+        case .GitHub:
+            title = String(format: NSLocalizedString("service-searcher", comment: ""), NSLocalizedString("github", comment: ""))
+        default:
+            break
+        }
+        
+        navigationItem.title = title
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
         
         searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = NSLocalizedString("search-for-users", comment: "")
         
         view.addSubview(tableView)
         tableView.dataSource = tableDataSource
@@ -116,16 +126,39 @@ extension UserSearchViewController: UITableViewDelegate {
      download images only for visible cells
      */
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard indexPath.row < users.count, let avatarUrl = users[indexPath.row].avatarUrl else {
+        guard indexPath.row < users.count else {
             return
         }
         
-        RequestFactory.downloadImage(url: avatarUrl) { image, _ in
-            DispatchQueue.main.async {
-                if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
-                    cellToUpdate.setImage(image)
+        let user = users[indexPath.row]
+        
+        if let avatarUrl = user.avatarUrl {
+            RequestFactory.downloadImage(url: avatarUrl) { image, _ in
+                DispatchQueue.main.async {
+                    if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
+                        cellToUpdate.setImage(image)
+                    }
                 }
             }
         }
+        
+        RequestFactory.getUserProfile(for: user, from: dataSourceType)?.update(user) { updatedUser, _ in
+            DispatchQueue.main.async {
+                if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
+                    cellToUpdate.updateNumberOfRepos(for: user)
+                }
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.row < users.count else {
+            return
+        }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let user = users[indexPath.row]
+        present(ViewControllerFactory.repositoryList(for: user, dataSource: dataSourceType), animated: true, completion: nil)
     }
 }

@@ -36,14 +36,4 @@ struct URLFactory {
         }
     }
 
-//    static func getPosterUrl(`for` dataSource: DataSourceType, posterPath: String?) -> URL? {
-//        guard let posterPath = posterPath, let urlTemplate = ConfigReader.getValue(for: .posterUrl, dataSource: dataSource) else {
-//            return nil
-//        }
-//
-//        switch dataSource {
-//        case .imdb:
-//            return URL(string: urlTemplate + posterPath)
-//        }
-//    }
 }

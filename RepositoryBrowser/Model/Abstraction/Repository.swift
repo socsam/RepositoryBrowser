@@ -9,18 +9,12 @@
 import Foundation
 
 /*
-The purpose of these protocol is to abstract details of particular Codable objects (GitHub, BitBucket ...)
+The purpose of this abstraction is to abstract details of particular Codable objects (GitHub, BitBucket ...)
 and expose universal interface that are used in the app to show repository info
 */
 
-protocol RepositoryObject {
-    var name:String? {get}
-    var starsCount:Int? {get}
-    var forksCount:Int? {get}
-}
-
-struct Repository: RepositoryObject {
-    var name:String?
+struct Repository {
+    var name:String!
     var starsCount:Int?
     var forksCount:Int?
     
@@ -32,7 +26,7 @@ struct Repository: RepositoryObject {
         self.forksCount = repo.forksCount
     }
 
-    static func `for`<T:Codable>(_ object:T) -> Repository {
+    static func `for`<Codable>(_ object: Codable) -> Repository {
         switch object {
         case let repo as GitHubRepository: return Repository(repo: repo)
         default: return Repository()

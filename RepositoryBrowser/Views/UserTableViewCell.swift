@@ -83,8 +83,13 @@ class UserTableViewCell: UITableViewCell {
 
     }
     
-    func configure(`for` user: UserObject) {
+    func configure(`for` user: User) {
         nameLabel.text = user.login
+        numberOfRepos.text = String(format: NSLocalizedString("repos-count", comment: ""), 0)
+        setImage(nil)
+    }
+    
+    func updateNumberOfRepos(`for` user: User) {
         let reposCount = String(user.publicRepos ?? 0)
         numberOfRepos.text = String(format: NSLocalizedString("repos-count", comment: ""), reposCount)
     }

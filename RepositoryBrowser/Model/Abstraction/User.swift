@@ -9,45 +9,44 @@
 import Foundation
 
 /*
-The purpose of these protocol is to hide details of particular Codable objects (GitHub, BitBucket ...)
+The purpose of this abstraction is to hide details of particular Codable objects (GitHub, BitBucket ...)
 and expose universal interface that are used in the app to show user info
 */
 
-protocol UserObject {
-    var id:Int? {get}
-    var login:String? {get}
-    var publicRepos:Int? {get}
-    var avatarUrl:URL? {get}
-    var followers:Int? {get}
-    var following:Int? {get}
-    var bio:String? {get}
-    var email:String? {get}
-    var createdAt:Date? {get}
-}
-
-
-class User: UserObject {
-    var id:Int?
-    var login:String?
-    var publicRepos:Int?
+class User {
+    var login:String!
     var avatarUrl:URL?
     var followers:Int?
     var following:Int?
     var bio:String?
     var email:String?
     var createdAt:Date?
+    var publicRepos:Int?
+    var reposUrl:URL?
 
     private init() {}
     
     private init(_ user: GitHubUser) {
+        populateFromGitHub(user)
+    }
+    
+    private func populateFromGitHub(_ user: GitHubUser) {
         self.login = user.login
-        self.publicRepos = user.publicRepos
         self.avatarUrl = user.avatarUrl
         self.followers = user.followers
         self.following = user.following
         self.bio = user.bio
         self.email = user.email
         self.createdAt = user.createdAt
+        self.publicRepos = user.publicRepos
+        self.reposUrl = user.reposUrl
+    }
+    
+    func update<T>(`with` profile:T) {
+        switch profile {
+        case let user as GitHubUser: populateFromGitHub(user)
+        default: break
+        }
     }
 
     static func `for`<T:Codable>(_ object:T) -> User {

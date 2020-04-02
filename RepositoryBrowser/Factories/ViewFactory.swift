@@ -15,7 +15,7 @@ struct TableViewCellFactory {
         return UITableViewCell()
     }
     
-    static func userCell(`for` tableView:UITableView, indexPath: IndexPath, user: UserObject) -> UserTableViewCell {
+    static func userCell(`for` tableView:UITableView, indexPath: IndexPath, user: User) -> UserTableViewCell {
         var cell:UserTableViewCell! = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as? UserTableViewCell
         
         if cell == nil {
@@ -23,10 +23,22 @@ struct TableViewCellFactory {
         }
         
         cell.configure(for: user)
+        return cell
+    }
+    
+    static func repositoryCell(`for` tableView:UITableView, indexPath: IndexPath, repository: Repository) -> RepositoryTableViewCell {
+        var cell:RepositoryTableViewCell! = tableView.dequeueReusableCell(withIdentifier: RepositoryTableViewCell.identifier, for: indexPath) as? RepositoryTableViewCell
+        
+        if cell == nil {
+            cell = RepositoryTableViewCell(style: .default, reuseIdentifier: RepositoryTableViewCell.identifier)
+        }
+        
+        cell.configure(for: repository)
         cell.selectionStyle = .none
 
         return cell
     }
+
 }
 
 struct TableVewFactory {
@@ -38,7 +50,15 @@ struct TableVewFactory {
         tableView.separatorStyle = .none
         return tableView
     }
-    
+
+    static func repositoryList() -> UITableView {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(RepositoryTableViewCell.self, forCellReuseIdentifier: RepositoryTableViewCell.identifier)
+        tableView.separatorStyle = .none
+        return tableView
+    }
+
 }
 
 struct ViewFactory {

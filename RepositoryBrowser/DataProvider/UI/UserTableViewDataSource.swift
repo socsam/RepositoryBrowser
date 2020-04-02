@@ -11,7 +11,7 @@ import UIKit
 
 class UserTableViewDataSource: NSObject, UITableViewDataSource {
     
-    var users:[UserObject]?
+    var users:[User]?
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users?.count ?? 0

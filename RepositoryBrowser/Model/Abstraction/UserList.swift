@@ -9,18 +9,11 @@
 import Foundation
 
 /*
-The purpose of these protocol is to hide details of particular Codable objects (GitHub, BitBucket ...)
+The purpose of this abstraction is to hide details of particular Codable objects (GitHub, BitBucket ...)
 and expose universal interface that are used in the app to show list of users
 */
 
-protocol UserListObject {
-    var totalCount:Int? {get}
-    var incompleteResults:Bool? {get}
-    var users:[User]? {get}
-}
-
-
-struct UserList: UserListObject {
+struct UserList {
     var totalCount:Int?
     var incompleteResults:Bool?
     var users:[User]?
@@ -34,7 +27,6 @@ struct UserList: UserListObject {
         if let users = list.users {
             self.users = users.map { User.for($0) }
         }
-
     }
 
     static func `for`<Codable>(_ object:Codable) -> UserList? {

@@ -10,24 +10,24 @@ import Foundation
 
 struct GitHubUser: Codable {
     enum CodingKeys: String, CodingKey {
-        case id
         case login
-        case publicRepos = "public_repos"
         case avatarUrl = "avatar_url"
         case followers
         case following
         case bio
         case email
         case createdAt = "created_at"
+        case publicRepos = "public_repos"
+        case reposUrl = "repos_url"
     }
     
-    var id:Int?
-    var login:String?
-    var publicRepos:Int?
+    var login:String
     var avatarUrl:URL?
     var followers:Int?
     var following:Int?
     var bio:String?
     var email:String?
     var createdAt:Date?
+    var publicRepos:Int?
+    var reposUrl:URL?
 }
