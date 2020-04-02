@@ -18,3 +18,9 @@
 "repos-count" = "Repo: %@";
 "forks-count" = "%d Forks";
 "stars-count" = "%d Stars";
+"followers" = "%d Followers";
+"following" = "Following %d";
+"no-email" = "No eamil";
+"no-location" = "No location";
+"no-join-date" = "Join date unkonwn";
+"search-repositories" = "Search for User's Repositories";

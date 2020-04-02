@@ -47,6 +47,7 @@ class GitHubTests: XCTestCase {
             XCTAssertEqual(repo.name, ".github")
             XCTAssertEqual(repo.starsCount, 0)
             XCTAssertEqual(repo.forksCount, 0)
+            XCTAssertEqual(repo.htmlUrl?.absoluteString, "https://github.com/fabpot/.github")
         } catch {
             print(error)
             XCTFail("Can't parse repositories.json")
@@ -77,6 +78,7 @@ class GitHubTests: XCTestCase {
             XCTAssertNotNil(user.createdAt)
             let createdDate = getDateFormatter().string(from: user.createdAt!)
             XCTAssertEqual(createdDate, "2008-02-28T23:17:13Z")
+            XCTAssertEqual(user.location, "San Francisco, CA")
 
         } catch {
             print(error)

@@ -23,6 +23,7 @@ class User {
     var createdAt:Date?
     var publicRepos:Int?
     var reposUrl:URL?
+    var location:String?
 
     private init() {}
     
@@ -40,6 +41,7 @@ class User {
         self.createdAt = user.createdAt
         self.publicRepos = user.publicRepos
         self.reposUrl = user.reposUrl
+        self.location = user.location
     }
     
     func update<T>(`with` profile:T) {

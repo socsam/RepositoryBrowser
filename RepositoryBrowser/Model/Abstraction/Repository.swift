@@ -17,6 +17,7 @@ struct Repository {
     var name:String!
     var starsCount:Int?
     var forksCount:Int?
+    var htmlUrl:URL?
     
     private init() {}
     
@@ -24,6 +25,7 @@ struct Repository {
         self.name = repo.name
         self.starsCount = repo.starsCount
         self.forksCount = repo.forksCount
+        self.htmlUrl = repo.htmlUrl
     }
 
     static func `for`<Codable>(_ object: Codable) -> Repository {

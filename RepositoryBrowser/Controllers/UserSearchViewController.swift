@@ -57,6 +57,7 @@ class UserSearchViewController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
         
+        searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.delegate = self
         searchController.searchBar.placeholder = NSLocalizedString("search-for-users", comment: "")
         
@@ -113,12 +114,28 @@ extension UserSearchViewController: UISearchBarDelegate {
      cancel all running network requests
      initiate new search request
      */
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    @objc public func doSearch() {
+        guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {
+            return
+        }
+        
         RequestFactory.cancelAll()
-        dataRequest = RequestFactory.searchUsers(in: dataSourceType, keyword: searchBar.text)
+        dataRequest = RequestFactory.searchUsers(in: dataSourceType, keyword: searchText)
         reloadData()
     }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if !searchText.isEmpty {
+            // to limit network activity, reload half a second after last key press.
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.doSearch), object: nil)
+            perform(#selector(self.doSearch), with: nil, afterDelay: 0.5)
+        }
+    }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        users = []
+    }
+
 }
 
 extension UserSearchViewController: UITableViewDelegate {

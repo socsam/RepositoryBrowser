@@ -19,6 +19,7 @@ struct GitHubUser: Codable {
         case createdAt = "created_at"
         case publicRepos = "public_repos"
         case reposUrl = "repos_url"
+        case location
     }
     
     var login:String
@@ -30,4 +31,5 @@ struct GitHubUser: Codable {
     var createdAt:Date?
     var publicRepos:Int?
     var reposUrl:URL?
+    var location:String?
 }

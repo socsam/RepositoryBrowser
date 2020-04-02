@@ -12,7 +12,7 @@ import UIKit
 struct ViewControllerFactory {
     
     static func usersList(from dataSource: DataSourceType = .GitHub, embedInNavigation:Bool = true) -> UIViewController {
-        let request = RequestFactory.searchUsers(in: dataSource, keyword: "john")
+        let request = RequestFactory.searchUsers(in: dataSource, keyword: nil)
         let repositoriesVC = UserSearchViewController(dataSource: dataSource, request: request)
         return embedInNavigation ? UINavigationController(rootViewController: repositoriesVC) : repositoriesVC
     }

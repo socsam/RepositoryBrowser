@@ -17,7 +17,7 @@ protocol UsersRequest {
 /*
  This is a wrapper for DataRequest to facilitate post-Decoding logic,
  to map service specific object (GitHubUserList) to UserList
- that will be passed to views/controllers to show movies list and details
+ that will be passed to views/controllers to show users list and details
  */
 struct UsersRequestImpl: UsersRequest {
     private let request:DataRequest
