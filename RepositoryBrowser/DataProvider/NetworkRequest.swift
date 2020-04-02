@@ -17,12 +17,8 @@ class NetworkRequest {
     private var password:String?
     
     private var session: URLSession = {
-        /*
-         disable URLSession cache for debugging purpose to make sure custom cache implementation is working properly
-         */
         let config = URLSessionConfiguration.default
-        config.requestCachePolicy = .returnCacheDataElseLoad //reloadIgnoringLocalAndRemoteCacheData
-//        config.urlCache = nil
+        config.requestCachePolicy = .reloadRevalidatingCacheData
         return URLSession.init(configuration: config)
     }()
     
