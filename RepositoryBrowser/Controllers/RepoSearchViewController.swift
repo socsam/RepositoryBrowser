@@ -62,9 +62,15 @@ class RepoSearchViewController: UIViewController {
         default:
             break
         }
+
         navigationItem.title = title
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
-        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(goBack))
+//        if #available(iOS 13, *) {
+//            //
+//        } else {
+//        }
+
         searchBar.autocapitalizationType = .none
         searchBar.showsCancelButton = true
         searchBar.placeholder = NSLocalizedString("search-repositories", comment: "")
@@ -137,6 +143,10 @@ class RepoSearchViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc func goBack() {
+        dismiss(animated: true, completion: nil)
     }
 }
 

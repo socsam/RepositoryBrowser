@@ -137,7 +137,10 @@ class UserSearchViewController: UIViewController {
     }
     
     @objc func backToLogin() {
-        dismiss(animated: true, completion: nil)
+        searchController.isActive = false
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 }
 
@@ -212,7 +215,10 @@ extension UserSearchViewController: UITableViewDelegate {
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
-        present(ViewControllerFactory.repositoryList(for: user, dataSource: dataSourceType), animated: true, completion: nil)
+        
+        let repoVC = ViewControllerFactory.repositoryList(for: user, dataSource: dataSourceType)
+        repoVC.modalPresentationStyle = .overFullScreen
+        searchController.present(repoVC, animated: true, completion: nil)
     }
 }
 
