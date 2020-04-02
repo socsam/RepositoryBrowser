@@ -18,7 +18,7 @@ class NetworkRequest {
     
     private var session: URLSession = {
         let config = URLSessionConfiguration.default
-        config.requestCachePolicy = .reloadRevalidatingCacheData
+        config.requestCachePolicy = .returnCacheDataElseLoad
         return URLSession.init(configuration: config)
     }()
     
