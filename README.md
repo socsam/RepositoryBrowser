@@ -9,15 +9,12 @@ The application was build with SOLID principles in mind.
 * Even though majority user already upgraded to iOS13 It’s a good practice to support previous version of iOS 12 to facilitate this necessary changes were made in AppDelegate.swift and SceneDelegate.swift
 * No third party library are used
 * Proxy server was used to observe behavior of the app on slow/unreliable internet connection
-
-
-Bonus Points:
 * json data is cached using URLSessionConfiguration 
 * user avatars are cached using NSCache
 * Implemented authentication (Basic) to get more results before reaching API limits. Usually credentials or OAuth tokens are saved in KeyChain but I haven’t implemented it for this test project
 * Infinite scrolling working for the first screen, using UITableView pre-fetch api
 
-Some ways to improve the app (wasn’t implemented because of limited scope of the project)
+Some ways to improve the app
 * Accessibility features for people with physical limitations
 * Implement UI tests (XCUITest + accessibilityIdentifier)
-* Add documentation to the code (explaining classes and methods)
+* Add more documentation to the code (explaining classes and methods)
