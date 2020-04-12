@@ -8,6 +8,10 @@
 
 import Foundation
 
+enum UserListError: Error {
+    case wrongServiceType
+}
+
 /*
 The purpose of this abstraction is to hide details of particular Codable objects (GitHub, BitBucket ...)
 and expose universal interface that are used in the app to show list of users
@@ -29,10 +33,10 @@ struct UserList {
         }
     }
 
-    static func `for`<Codable>(_ object:Codable) -> UserList? {
+    static func `for`<Codable>(_ object:Codable) -> Result<UserList, Error> {
         switch object {
-        case let list as GitHubUserList: return UserList(list)
-        default: return nil
+        case let list as GitHubUserList: return .success(UserList(list))
+        default: return .failure(UserListError.wrongServiceType)
         }
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol RepositoryRequest {
-    func getList(completionHandler: @escaping ([Repository]?, Error?) -> Void)
+    func getList(completion: @escaping (Result<[Repository], Error>) -> Void)
 }
 
 
@@ -28,15 +28,16 @@ struct RepositoryRequestImpl: RepositoryRequest {
     /*
      this method executes JSONRequest and calls factory method to create UserList from GitHubUserList
      */
-    func getList(completionHandler: @escaping ([Repository]?, Error?) -> Void) {
-        request.execute { (decodedObject:Codable?, error:Error?) in
-            guard let decodedObject = decodedObject as? [Codable] else {
-                completionHandler(nil, error)
-                return
+    func getList(completion: @escaping (Result<[Repository], Error>) -> Void) {
+        request.execute { result in
+            switch result {
+            case .success(let decodedObject):
+                if let repositoriesRaw = decodedObject as? [Codable] {
+                    let repositories = repositoriesRaw.map { Repository.for($0) }
+                    completion(.success(repositories))
+                }
+            case .failure(let error): completion(.failure(error))
             }
-            
-            let repositories = decodedObject.map { Repository.for($0) }
-            completionHandler(repositories, nil)
         }
     }
 }

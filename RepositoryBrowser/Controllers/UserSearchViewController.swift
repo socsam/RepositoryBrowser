@@ -79,13 +79,14 @@ class UserSearchViewController: UIViewController {
         tableView.reloadData()
 
         activityIndicator.startAnimating()
-        request.getList { [weak self] userList, error in
+        request.getList { [weak self] result in
             DispatchQueue.main.async {
                 guard let strongSelf = self else {
                     return
                 }
                 
-                if let list = userList {
+                switch result {
+                case .success(let list):
                     strongSelf.activityIndicator.stopAnimating()
                     
                     /*
@@ -103,7 +104,8 @@ class UserSearchViewController: UIViewController {
                     }
                     
                     strongSelf.tableView.reloadData()
-                } else {
+                
+                case .failure(let error):
                     if let error = error as NSError? {
                         //don't show error if request was canceled
                         if error.code != NSURLErrorCancelled {
@@ -122,15 +124,19 @@ class UserSearchViewController: UIViewController {
     @objc private func loadMoreData(rowsToReload:[IndexPath]) {
         guard let request = dataRequest else { return }
         
-        request.getList { [weak self] userList, error in
+        request.getList { [weak self] result /*userList, error*/ in
             DispatchQueue.main.async {
                 guard let strongSelf = self else {
                     return
                 }
                 
-                if let additionalUsers = userList?.users {
-                    strongSelf.tableDataSource.append(additionalUsers)
-                    strongSelf.tableView.reloadRows(at: rowsToReload, with: .none)
+                switch result {
+                case .success(let usersList):
+                    if let additionalUsers = usersList.users {
+                        strongSelf.tableDataSource.append(additionalUsers)
+                        strongSelf.tableView.reloadRows(at: rowsToReload, with: .none)
+                    }
+                case .failure(_): break
                 }
             }
         }
@@ -191,19 +197,23 @@ extension UserSearchViewController: UITableViewDelegate {
         }
         
         if let avatarUrl = user.avatarUrl {
-            RequestFactory.downloadImage(url: avatarUrl) { image, _ in
+            RequestFactory.downloadImage(url: avatarUrl) { result in
                 DispatchQueue.main.async {
-                    if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
-                        cellToUpdate.setImage(image)
+                    if let image = try? result.get() {
+                        if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
+                            cellToUpdate.setImage(image)
+                        }
                     }
                 }
             }
         }
         
-        RequestFactory.getUserProfile(for: user, from: dataSourceType)?.update(user) { updatedUser, _ in
+        RequestFactory.getUserProfile(for: user, from: dataSourceType)?.update(user) { result in
             DispatchQueue.main.async {
-                if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
-                    cellToUpdate.updateNumberOfRepos(for: user)
+                if let updatedUser = try? result.get() {
+                    if let cellToUpdate = tableView.cellForRow(at: indexPath) as? UserTableViewCell {
+                        cellToUpdate.updateNumberOfRepos(for: updatedUser)
+                    }
                 }
             }
         }

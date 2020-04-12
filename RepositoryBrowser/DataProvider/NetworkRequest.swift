@@ -9,6 +9,11 @@
 import Foundation
 import UIKit
 
+enum NetworkRequestError: Error {
+    case loadData
+    case loadImage
+}
+
 class NetworkRequest {
     
     public static let shared = NetworkRequest()
@@ -43,16 +48,22 @@ class NetworkRequest {
         return request
     }
 
-    public func getData(url:URL, completionHandler: @escaping (Data?, Error?) -> Void) {
+    public func getData(url:URL, completion: @escaping (Result<Data, Error>) -> Void) {
         let request = getRequest(for: url)
         session.dataTask(with: request) { (data, response, error) in
-            completionHandler(data, error)
+            if let error = error {
+                completion(.failure(error))
+            } else if let data = data {
+                completion(.success(data))
+            } else {
+                completion(.failure(NetworkRequestError.loadData))
+            }
         }.resume()
     }
 
-    public func downloadImage(url:URL, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+    public func downloadImage(url:URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
         if let image = self.cache.object(forKey: url as NSURL) {
-            completionHandler(image, nil)
+            completion(.success(image))
         } else {
             session.downloadTask(with: url, completionHandler: { [weak self] (localURL, response, error) in
                 guard let strongSelf = self, let localURL = localURL else {
@@ -63,12 +74,12 @@ class NetworkRequest {
                     let data = try Data(contentsOf: localURL)
                     if let image = UIImage(data: data) {
                         strongSelf.cache.setObject(image, forKey: url as NSURL)
-                        completionHandler(image, nil)
+                        completion(.success(image))
                     } else {
-                        completionHandler(nil, nil)
+                        completion(.failure(NetworkRequestError.loadImage))
                     }
                 } catch let readingDataError {
-                    completionHandler(nil, readingDataError)
+                    completion(.failure(readingDataError))
                 }
             }).resume()
         }
