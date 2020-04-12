@@ -13,5 +13,5 @@ import Foundation
  */
 
 protocol DataRequest {
-    func execute(completionHandler: @escaping (Codable?, Error?) -> Void)
+    func execute(completion: @escaping (Result<Codable, Error>) -> Void)
 }

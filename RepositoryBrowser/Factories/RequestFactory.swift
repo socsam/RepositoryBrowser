@@ -45,9 +45,9 @@ struct RequestFactory {
         return RepositoryRequestImpl(request: request)
     }
     
-    static func downloadImage(url:URL, completionHandler: @escaping (UIImage?, Error?) -> Void) {
-        NetworkRequest.shared.downloadImage(url: url) { image, error in
-            completionHandler(image, error)
+    static func downloadImage(url:URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        NetworkRequest.shared.downloadImage(url: url) { result in
+            completion(result)
         }
     }
     

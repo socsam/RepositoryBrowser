@@ -9,8 +9,8 @@
 import Foundation
 
 protocol UsersRequest {
-    func getList(completionHandler: @escaping (UserList?, Error?) -> Void)
-    func update(_ user:User, completionHandler: @escaping (User, Error?) -> Void)
+    func getList(completion: @escaping (Result<UserList, Error>) -> Void)
+    func update(_ user:User, completion: @escaping (Result<User, Error>) -> Void)
 }
 
 
@@ -29,26 +29,23 @@ struct UsersRequestImpl: UsersRequest {
     /*
      this method executes JSONRequest and calls factory method to create UserList from GitHubUserList
      */
-    func getList(completionHandler: @escaping (UserList?, Error?) -> Void) {
-        request.execute { (decodedObject:Codable?, error:Error?) in
-            guard let decodedObject = decodedObject else {
-                completionHandler(nil, error)
-                return
+    func getList(completion: @escaping (Result<UserList, Error>) -> Void) {
+        request.execute { result in
+            switch result {
+            case .success(let decodedObject): completion(UserList.for(decodedObject))
+            case .failure(let error): completion(.failure(error))
             }
-
-            completionHandler(UserList.for(decodedObject), nil)
         }
     }
     
-    func update(_ user:User, completionHandler: @escaping (User, Error?) -> Void) {
-        request.execute { (decodedObject:Codable?, error:Error?) in
-            guard let decodedObject = decodedObject else {
-                completionHandler(user, error)
-                return
+    func update(_ user:User, completion: @escaping (Result<User, Error>) -> Void) {
+        request.execute { result in
+            switch result {
+            case .success(let decodedObject):
+                user.update(with: decodedObject)
+                completion(.success(user))
+            case .failure(let error): completion(.failure(error))
             }
-
-            user.update(with: decodedObject)
-            completionHandler(user, nil)
         }
     }
 }

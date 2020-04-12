@@ -113,13 +113,14 @@ class RepoSearchViewController: UIViewController {
         
         activityIndicator.startAnimating()
         repositories = []
-        request.getList { [weak self] repositories, error in
+        request.getList { [weak self] result in
             DispatchQueue.main.async {
                 guard let strongSelf = self else {
                     return
                 }
                 
-                if let repositories = repositories {
+                switch result {
+                case .success(let repositories):
                     strongSelf.activityIndicator.stopAnimating()
                     strongSelf.repositories = repositories
                     
@@ -128,7 +129,7 @@ class RepoSearchViewController: UIViewController {
                     if repositories.count == 0 {
                         strongSelf.showMessage(title: nil, message: NSLocalizedString("search-no-results", comment: ""))
                     }
-                } else {
+                case .failure(let error):
                     strongSelf.repositories = []
                     if let error = error as NSError? {
                         //don't show error if request was canceled
@@ -262,13 +263,15 @@ private class HeaderView: UIView {
         bioLabel.text = user.bio
         
         if let avatarUrl = user.avatarUrl {
-            NetworkRequest.shared.downloadImage(url: avatarUrl) { [weak self] image, _ in
+            NetworkRequest.shared.downloadImage(url: avatarUrl) { [weak self] result in
                 DispatchQueue.main.async {
                     guard let strongSelf = self else {
                         return
                     }
                     
-                    strongSelf.imageView.image = image
+                    if let image = try? result.get() {
+                        strongSelf.imageView.image = image
+                    }
                 }
             }
         }

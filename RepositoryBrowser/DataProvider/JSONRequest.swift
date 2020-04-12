@@ -19,22 +19,22 @@ class JSONRequest<T:Codable> {
 }
 
 extension JSONRequest: DataRequest {
-    func execute(completionHandler: @escaping (Codable?, Error?) -> Void) {
+    func execute(completion: @escaping (Result<Codable, Error>) -> Void) {
         let requestType = self.requestType
-        NetworkRequest.shared.getData(url: url) { data, error in
-           guard let data = data else {
-               completionHandler(nil, error)
-               return
-           }
-
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                let json = try decoder.decode(requestType, from: data)
-                completionHandler(json, nil)
-            } catch let decodingError {
-               completionHandler(nil, decodingError)
-           }
+        NetworkRequest.shared.getData(url: url) { result in
+            switch result {
+            case .success(let data):
+                 do {
+                     let decoder = JSONDecoder()
+                     decoder.dateDecodingStrategy = .iso8601
+                     let json = try decoder.decode(requestType, from: data)
+                    completion(.success(json))
+                 } catch let decodingError {
+                    completion(.failure(decodingError))
+                }
+                
+            case .failure(let error): completion(.failure(error))
+            }
         }
     }
 }
